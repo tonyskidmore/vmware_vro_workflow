@@ -1,0 +1,23 @@
+---
+- name: test vro workflow
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+  - name: run vro workflow by name
+    vmware_vro_workflow:
+      name: test-workflow
+      hostname: vro.domain.local
+      username: vcoadmin
+      password: vcoadmin
+      validate_certs: False
+
+  - name: run vro workflow by UUID
+    vmware_vro_workflow:
+      uuid: a7a1d06a-9018-40c4-9199-1ce95932311c
+      hostname: vro.domain.local
+      username: vcoadmin
+      password: vcoadmin
+      validate_certs: False
