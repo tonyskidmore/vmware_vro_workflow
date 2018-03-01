@@ -1,4 +1,4 @@
-# ansible-vro
+# vmware_vro_workflow
 > Ansible module for executing vRealize Orchestrator workflows
 
 ## Synopsis
