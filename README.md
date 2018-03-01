@@ -73,7 +73,7 @@ The ```vmware_vro_workflow.py``` Python script in the library directory of this 
     debug:
       var: workflow_parameters
 
-            - name: run vro workflow
+  - name: run vro workflow
     vmware_vro_workflow:
       name: "{{ workflow_name | default(omit) }}"
       uuid: "{{ workflow_uuid | default(omit) }}"
