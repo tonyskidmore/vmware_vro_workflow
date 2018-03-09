@@ -1,0 +1,43 @@
+---
+- name: run vRO workflow playbook
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - vro-vars.yml
+
+  vars:
+    vro_server: "[% args_dict.server %]"
+    validate_certs: "[% args_dict.insecure %]"
+    workflow_uuid: "[% args_dict.workflowid %]"
+    username: "[% args_dict.username %]"
+
+  vars_prompt:
+    - name: "password"
+      prompt: "vRO password"
+      private: yes
+
+  tasks:
+
+  - name: debug vars
+    debug:
+      var: workflow_parameters
+
+  - name: run vro workflow
+    vmware_vro_workflow:
+      name: "{{ workflow_name | default(omit) }}"
+      uuid: "{{ workflow_uuid | default(omit) }}"
+      state: "{{ workflow_state | default(omit) }}"
+      hostname: "{{ vro_server }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      validate_certs: "{{ validate_certs | default(omit)}}"
+      inputs: "{{ workflow_parameters | default(omit) }}"
+      timeout: "{{ workflow_timeout_seconds | default(omit) }}"
+      wait_for_workflow: "{{ workflow_wait | default(omit) }}"
+    register: vro_workflow_run
+
+  - name: debug vro_workflow_run
+    debug:
+      var: vro_workflow_run

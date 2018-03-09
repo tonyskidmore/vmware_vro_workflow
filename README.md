@@ -4,7 +4,48 @@
 ## Synopsis
 The ```vmware_vro_workflow.py``` Python script in the library directory of this repo is an Ansible module for executing vRealize Orchestrator workflows.  
 
-## Examples
+## Auto-Generating Ansible Playbooks from previous vRO workflow executions  
+If you know the ID of the workflow that you want to execute (look for ID GUID under General tab of workflow) and the ID of an execution of that workflow (look under ID of the General tab of an execution instance of the workflow) you can auto-generate an Ansible playbook and associated vars file to replay that execution using the ```vro_workflow_to_ansible.py`` script.  
+  
+### Example  
+Clone this repo and identify the workflowid and executionid as described above.  You can view the script parameters by using ```--help```:  
+
+```
+$ ./vro_workflow_to_ansible.py --help
+usage: vro_workflow_to_ansible.py [-h] -s SERVER [-l LISTENINGPORT] -e
+                                  EXECUTIONID -w WORKFLOWID -u USERNAME
+                                  [-p PASSWORD] [-i]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SERVER, --server SERVER
+  -l LISTENINGPORT, --listeningport LISTENINGPORT
+  -e EXECUTIONID, --executionid EXECUTIONID
+  -w WORKFLOWID, --workflowid WORKFLOWID
+  -u USERNAME, --username USERNAME
+  -p PASSWORD, --password PASSWORD
+  -i, --insecure
+```
+So if we had the following workflow and execution IDs:  
+Workflow ID: 1b1bc06b-593e-423a-a434-1430888550de  
+Execution ID: 2c9325a561f6998a0161faef558200f3  
+
+We could use the following syntax:  
+```
+./vro_workflow_to_ansible.py -s vro.domain.local -u vcoadmin -w 1b1bc06b-593e-423a-a434-1430888550de -e 2c9325a561f6998a0161faef558200f3 -i
+```
+When the above is executed you will be prompted for ```Enter vRO password:``` if not provided on the command line (bad idea).  Once executed successfully you should get the URL of the REST API call displayed i.e. :  
+https://vro.domain.local:8281/vco/api/workflows/1b1bc06b-593e-423a-a434-1430888550de/executions/2c9325a561f6998a0161faef558200f3/  
+
+This should have created ```vro-playbook.yml``` and ```vro-vars.yml``` files.  You should then be able to just execute the Anisble playbook to replay the previous vRO workflow execution:  
+```
+ansible-playbook vro-playbook.yml
+vRO password:
+```
+Re-enter you vRO password above to trigger the execution.  Even if for some reason the Ansible Playbook or vRO workflow fails you should still have the basis of creating an Ansible playbook for your requirements that may require some manual adjustment.  
+  
+
+## Manually Created Example Playbooks
 * Run the workflow *test-workflow* using it's workflow name  
 ```
 - name: run vro workflow by name
